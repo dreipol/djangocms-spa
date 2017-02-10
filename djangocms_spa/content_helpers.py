@@ -5,6 +5,7 @@ from cms.models import StaticPlaceholder
 from cms.plugin_pool import plugin_pool
 from django.conf import settings
 
+from djangocms_spa.renderer_pool import renderer_pool
 from .utils import get_function_by_path
 
 
@@ -105,19 +106,16 @@ def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
     Returns a serializable data dict of a CMS plugin and all its children. It expects a `render_json_plugin()` method
     from each plugin. Make sure you implement it for your custom plugins and monkey patch all third-party plugins.
     """
-    instance, plugin_class = plugin.get_plugin_instance()
-    try:
-        json_data = plugin_class.render_json_plugin(
-            request=request,
-            instance=instance,
-            position=plugin.position,
-            include_admin_data=include_admin_data
-        )
-    except AttributeError:
+    instance, plugin = plugin.get_plugin_instance()
+    renderer = renderer_pool.renderer_for_plugin(plugin)
+    if renderer:
+        json_data = renderer.render(request=request, plugin=plugin, instance=instance, position=instance.position,
+                                    include_admin_data=include_admin_data)
+    else:
         json_data = {}  # Initialize an empty dict if the plugin has no `render_json_plugin()` method.
 
     children = []
-    for child_plugin in plugin.get_children():
+    for child_plugin in instance.get_children():
         # Parse all children
         children.append(
             get_frontend_data_dict_for_plugin(
