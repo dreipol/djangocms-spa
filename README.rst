@@ -2,9 +2,9 @@
 djangocms-spa
 =============
 
-Run your django CMS project as a single-page application (SPA) by using this collection of helpers together with
-another package (e.g. `djangocms-spa-vue-js`).
+Run your django CMS project as a single-page application (SPA). This is is just a collection of helpers. It is was build to use it together with a concrete implementation e.g.
 
+ * [djangocms-spa-vue-js](https://github.com/dreipol/djangocms-spa-vue-js)
 
 Quickstart
 ----------
