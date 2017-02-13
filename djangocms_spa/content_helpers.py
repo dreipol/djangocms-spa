@@ -6,6 +6,7 @@ from cms.plugin_pool import plugin_pool
 from django.conf import settings
 
 from djangocms_spa.renderer_pool import renderer_pool
+
 from .utils import get_function_by_path
 
 
