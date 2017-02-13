@@ -8,14 +8,14 @@ class BaseSPARenderer(object):
     frontend_component_name = ''
     plugin_class = None
 
-    def render(self, request, plugin, instance=None, include_admin_data=False):
+    def render(self, request, plugin, instance=None, editable=False):
         context = {
             'content': {},
             'position': instance.position,
             'type': self.frontend_component_name
         }
 
-        if include_admin_data:
+        if editable:
             # This is the structure of the template `cms/toolbar/plugin.html` that is used to register
             # the frontend editing.
             context['cms'] = [
@@ -56,7 +56,6 @@ class MixinPluginRenderer(BaseSPARenderer):
     def frontend_component_name(self):
         return self.plugin_class.frontend_component_name
 
-    def render(self, request, plugin, instance=None, include_admin_data=False):
-        context = super(MixinPluginRenderer, self).render(request, plugin, instance, include_admin_data)
-        return plugin.render_spa(request=request, context=context, instance=instance,
-                                 include_admin_data=include_admin_data)
+    def render(self, request, plugin, instance=None, editable=False):
+        context = super(MixinPluginRenderer, self).render(request, plugin, instance, editable)
+        return plugin.render_spa(request=request, context=context, instance=instance)
