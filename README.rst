@@ -32,8 +32,8 @@ Set your default template::
     DJANGOCMS_SPA_DEFAULT_TEMPLATE = 'pages/content.html'
 
 
-Configure templates, the component names used by your frontend team and partial contents (e.g. static placeholders). You should cover all templates
-of `CMS_TEMPLATES` and all of your custom views::
+Configure templates, the component names used by your frontend team and partial contents (e.g. static placeholders).
+You should cover all templates of `CMS_TEMPLATES` and all of your custom views::
 
     DJANGOCMS_SPA_TEMPLATES = {
         'pages/content.html': {
@@ -52,6 +52,34 @@ Configure custom partials::
     DJANGOCMS_SPA_PARTIAL_CALLBACKS = {
         'menu': 'djangocms_spa.partial_callbacks.get_cms_menu_data_dict'
     }
+
+
+Partials
+--------
+
+We call global page elements that are used to render a template `partial`. The contents of a partial do not
+change from one page to another. In a django CMS project partials are implemented as static placeholders. Because we
+don't render any HTML templates, we need to configure the static placeholders per template in `DJANGOCMS_SPA_TEMPLATES`
+as partials. To edit your placeholder and static placeholder data, you need to render both in the edit mode::
+
+    {% if request.toolbar.edit_mode %}
+        {% placeholder "main" %}
+        {% static_placeholder "footer" %}
+    {% endif %}
+
+Usually there are other parts (e.g. menu) that work pretty much like static placeholders. Because we don't have a
+template that allows us to render template tags, we need to have a custom implementation for those needs. We decided to
+use a `callback` approach that allows developers to bring custom data into the partial list. Define your callbacks
+in `DJANGOCMS_SPA_PARTIAL_CALLBACKS` by added a partial key and the module path of the callback function. You will find
+an example in `djangocms_spa/partial_callbacks.py`. Your function should return a dictionary like this::
+
+    {
+        'type': 'generic',
+        'content': {
+            'my_var': 1
+        }
+    }
+
 
 Credits
 -------
