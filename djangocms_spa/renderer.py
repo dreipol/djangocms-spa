@@ -8,10 +8,10 @@ class BaseSPARenderer(object):
     frontend_component_name = ''
     plugin_class = None
 
-    def render(self, request, plugin, instance=None, position=0, include_admin_data=False):
+    def render(self, request, plugin, instance=None, include_admin_data=False):
         context = {
             'content': {},
-            'position': position,
+            'position': instance.position,
             'type': self.frontend_component_name
         }
 
@@ -56,6 +56,7 @@ class MixinPluginRenderer(BaseSPARenderer):
     def frontend_component_name(self):
         return self.plugin_class.frontend_component_name
 
-    def render(self, request, plugin, instance=None, position=0, include_admin_data=False):
-        context = super(MixinPluginRenderer).render(request, plugin, instance, position, include_admin_data)
-        return plugin.render_spa(request, context, instance, position, include_admin_data)
+    def render(self, request, plugin, instance=None, include_admin_data=False):
+        context = super(MixinPluginRenderer, self).render(request, plugin, instance, include_admin_data)
+        return plugin.render_spa(request=request, context=context, instance=instance,
+                                 include_admin_data=include_admin_data)

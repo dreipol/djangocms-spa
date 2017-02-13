@@ -110,7 +110,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
     instance, plugin = plugin.get_plugin_instance()
     renderer = renderer_pool.renderer_for_plugin(plugin)
     if renderer:
-        json_data = renderer.render(request=request, plugin=plugin, instance=instance, position=instance.position,
+        json_data = renderer.render(request=request, plugin=plugin, instance=instance,
                                     include_admin_data=include_admin_data)
     else:
         json_data = {}  # Initialize an empty dict if the plugin has no `render_json_plugin()` method.
