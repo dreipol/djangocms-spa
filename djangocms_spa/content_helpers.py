@@ -52,23 +52,17 @@ def get_frontend_data_dict_for_placeholders(placeholders, request, include_admin
     data_dict = {}
     for placeholder in placeholders:
         if placeholder:
-            placeholder_slot_plugins = []
+            plugins = []
 
             for plugin in placeholder.get_plugins():
                 # We need the complete cascading structure of the plugins in the frontend. This is why we ignore the
                 # children here and add them later in the loop.
                 if not plugin.parent:
-                    placeholder_slot_plugins.append(get_frontend_data_dict_for_plugin(
+                    plugins.append(get_frontend_data_dict_for_plugin(
                         request=request,
                         plugin=plugin,
                         include_admin_data=include_admin_data)
                     )
-
-            # Sort all plugins by the position property.
-            try:
-                plugins = sorted(placeholder_slot_plugins, key=itemgetter('position'))
-            except KeyError:
-                plugins = placeholder_slot_plugins
 
             if plugins or include_admin_data:
                 data_dict[placeholder.slot] = {
@@ -116,7 +110,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
         json_data = {}  # Initialize an empty dict if the plugin has no `render_json_plugin()` method.
 
     children = []
-    for child_plugin in instance.get_children():
+    for child_plugin in instance.get_children().order_by("path"):
         # Parse all children
         children.append(
             get_frontend_data_dict_for_plugin(
@@ -126,11 +120,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
             )
         )
 
-    if children:
-        try:
-            json_data['plugins'] = sorted(children, key=itemgetter('position'))
-        except KeyError:
-            json_data['plugins'] = children
+    json_data['plugins'] = children
 
     return json_data
 
