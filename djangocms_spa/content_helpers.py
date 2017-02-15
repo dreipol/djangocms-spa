@@ -10,7 +10,7 @@ from djangocms_spa.renderer_pool import renderer_pool
 from .utils import get_function_by_path
 
 
-def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, include_admin_data=False):
+def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, editable=False):
     """
     Returns the data dictionary of a CMS page that is used by the frontend.
     """
@@ -18,7 +18,7 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, inclu
     placeholder_frontend_data_dict = get_frontend_data_dict_for_placeholders(
         placeholders=placeholders,
         request=request,
-        include_admin_data=include_admin_data
+        editable=editable
     )
     global_placeholder_data_dict = get_global_placeholder_data(placeholder_frontend_data_dict)
     data = {
@@ -44,7 +44,7 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, inclu
     return data
 
 
-def get_frontend_data_dict_for_placeholders(placeholders, request, include_admin_data=False):
+def get_frontend_data_dict_for_placeholders(placeholders, request, editable=False):
     """
     Takes a list of placeholder instances and returns the data that is used by the frontend to render all contents.
     The returned dict is grouped by placeholder slots.
@@ -61,16 +61,16 @@ def get_frontend_data_dict_for_placeholders(placeholders, request, include_admin
                     plugins.append(get_frontend_data_dict_for_plugin(
                         request=request,
                         plugin=plugin,
-                        include_admin_data=include_admin_data)
+                        editable=editable)
                     )
 
-            if plugins or include_admin_data:
+            if plugins or editable:
                 data_dict[placeholder.slot] = {
                     'type': 'cmp-%s' % placeholder.slot,
                     'plugins': plugins,
                 }
 
-            if include_admin_data:
+            if editable:
                 # This is the structure of the template `cms/toolbar/placeholder.html` that is used to register
                 # the frontend editing.
                 plugin_types = [cls.__name__ for cls in plugin_pool.get_all_plugins(placeholder.slot, placeholder.page)]
@@ -96,7 +96,7 @@ def get_frontend_data_dict_for_placeholders(placeholders, request, include_admin
     return data_dict
 
 
-def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
+def get_frontend_data_dict_for_plugin(request, plugin, editable):
     """
     Returns a serializable data dict of a CMS plugin and all its children. It expects a `render_json_plugin()` method
     from each plugin. Make sure you implement it for your custom plugins and monkey patch all third-party plugins.
@@ -104,8 +104,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
     instance, plugin = plugin.get_plugin_instance()
     renderer = renderer_pool.renderer_for_plugin(plugin)
     if renderer:
-        json_data = renderer.render(request=request, plugin=plugin, instance=instance,
-                                    include_admin_data=include_admin_data)
+        json_data = renderer.render(request=request, plugin=plugin, instance=instance, editable=editable)
     else:
         json_data = {}  # Initialize an empty dict if the plugin has no `render_json_plugin()` method.
 
@@ -116,7 +115,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, include_admin_data):
             get_frontend_data_dict_for_plugin(
                 request=request,
                 plugin=child_plugin,
-                include_admin_data=include_admin_data
+                editable=editable
             )
         )
 
@@ -149,7 +148,7 @@ def get_partial_names_for_template(template=None, get_all=True, requested_partia
         return [partial for partial in partials if partial in requested_partials]
 
 
-def get_frontend_data_dict_for_partials(partials, request, include_admin_data=False, renderer=None):
+def get_frontend_data_dict_for_partials(partials, request, editable=False, renderer=None):
     """
     We call global page elements that are used to render a template `partial`. The contents of a partial do not
     change from one page to another. In a django CMS project partials are implemented as static placeholders. But
@@ -178,7 +177,7 @@ def get_frontend_data_dict_for_partials(partials, request, include_admin_data=Fa
     partial_data = get_frontend_data_dict_for_placeholders(
         placeholders=static_placeholders,
         request=request,
-        include_admin_data=include_admin_data
+        editable=editable
     )
 
     # Get the data of all partials that have a custom callback.
