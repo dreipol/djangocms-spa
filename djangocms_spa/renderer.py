@@ -11,7 +11,6 @@ class BaseSPARenderer(object):
     def render(self, request, plugin, instance=None, include_admin_data=False):
         context = {
             'content': {},
-            'position': instance.position,
             'type': self.frontend_component_name
         }
 
