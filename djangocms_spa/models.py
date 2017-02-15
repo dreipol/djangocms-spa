@@ -1,5 +1,6 @@
 from cms.utils.urlutils import admin_reverse
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from menus.menu_pool import MenuRenderer
 
@@ -18,7 +19,10 @@ class DjangoCmsSPAConf(AppConf):
     PLACEHOLDER_DATA_POST_PROCESSOR = None
 
 
-class DjangoCmsMixin(object):
+class DjangoCmsMixin(models.Model):
+    class Meta:
+        abstract = True
+
     def get_placeholder_field_names(self):
         """
         Returns a list with the names of all PlaceholderFields.

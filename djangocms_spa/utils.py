@@ -1,6 +1,7 @@
 from importlib import import_module
 
 from django.conf import settings
+from django.urls import resolve
 
 
 def get_function_by_path(dotted_function_module_path):
@@ -32,3 +33,10 @@ def get_template_path_by_frontend_component_name(frontend_component_name):
             return template_path
 
     return settings.DJANGOCMS_SPA_TEMPLATES[settings.DJANGOCMS_SPA_DEFAULT_TEMPLATE]['frontend_component_name']
+
+
+def get_view_from_url(url):
+    resolved_url = resolve(url)
+    view_module_path = resolved_url._func_path  # e.g. my_app.views.views.MyListView
+    view = get_function_by_path(view_module_path)
+    return view

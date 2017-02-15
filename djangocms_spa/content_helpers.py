@@ -1,8 +1,6 @@
-from operator import itemgetter
 from urllib.request import url2pathname
 
 from cms.models import StaticPlaceholder
-from cms.plugin_pool import plugin_pool
 from django.conf import settings
 
 from djangocms_spa.renderer_pool import renderer_pool
@@ -22,7 +20,6 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, edita
     )
     global_placeholder_data_dict = get_global_placeholder_data(placeholder_frontend_data_dict)
     data = {
-        'title': cms_page_title.title,
         'containers': placeholder_frontend_data_dict,
         'meta': {
             'title': cms_page_title.title,
@@ -73,6 +70,7 @@ def get_frontend_data_dict_for_placeholders(placeholders, request, editable=Fals
             if editable:
                 # This is the structure of the template `cms/toolbar/placeholder.html` that is used to register
                 # the frontend editing.
+                from cms.plugin_pool import plugin_pool
                 plugin_types = [cls.__name__ for cls in plugin_pool.get_all_plugins(placeholder.slot, placeholder.page)]
                 allowed_plugins = plugin_types + plugin_pool.get_system_plugins()
 
