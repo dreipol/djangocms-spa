@@ -51,7 +51,7 @@ def get_frontend_data_dict_for_placeholders(placeholders, request, editable=Fals
         if placeholder:
             plugins = []
 
-            for plugin in placeholder.get_plugins():
+            for plugin in placeholder.get_plugins(language=request.LANGUAGE_CODE):
                 # We need the complete cascading structure of the plugins in the frontend. This is why we ignore the
                 # children here and add them later in the loop.
                 if not plugin.parent:
