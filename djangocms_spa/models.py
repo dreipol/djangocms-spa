@@ -15,6 +15,8 @@ class DjangoCmsSPAConf(AppConf):
             'static_placeholders': ['']
         }
     }
+    CACHE_TIMEOUT = 60 * 10
+    DEFAULT_LIST_CONTAINER_NAME = 'object_list'
     CMS_PAGE_FRONTEND_DATA_POST_PROCESSOR = None
     PLACEHOLDER_DATA_POST_PROCESSOR = None
 
