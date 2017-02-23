@@ -124,10 +124,10 @@ class SpaCmsPageDetailApiView(SpaApiView):
     cms_page_title = None
 
     def get(self, request, **kwargs):
-        self.cms_page = get_page_from_request(request, use_path=kwargs.get('path', ''))
-        self.cms_page_title = self.cms_page.title_set.get(language=request.LANGUAGE_CODE)
-
-        if not self.cms_page or not self.cms_page_title:
+        try:
+            self.cms_page = get_page_from_request(request, use_path=kwargs.get('path', ''))
+            self.cms_page_title = self.cms_page.title_set.get(language=request.LANGUAGE_CODE)
+        except AttributeError:
             return JsonResponse(data={}, status=404)
 
         return super(SpaCmsPageDetailApiView, self).get(request, **kwargs)
