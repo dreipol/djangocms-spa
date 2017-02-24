@@ -5,7 +5,6 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
-
 from rest_framework.views import APIView
 
 from .content_helpers import (get_frontend_data_dict_for_cms_page, get_frontend_data_dict_for_partials,
