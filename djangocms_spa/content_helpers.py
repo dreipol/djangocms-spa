@@ -36,7 +36,7 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, edita
     post_processer = settings.DJANGOCMS_SPA_CMS_PAGE_DATA_POST_PROCESSOR
     if post_processer:
         func = get_function_by_path(post_processer)
-        data = func(data=data, request=request)
+        data = func(cms_page=cms_page, data=data, request=request)
 
     return data
 
