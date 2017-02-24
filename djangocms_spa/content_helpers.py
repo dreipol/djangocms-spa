@@ -33,7 +33,7 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, edita
     if global_placeholder_data_dict:
         data['global_placeholder_data'] = global_placeholder_data_dict
 
-    post_processer = settings.DJANGOCMS_SPA_CMS_PAGE_FRONTEND_DATA_POST_PROCESSOR
+    post_processer = settings.DJANGOCMS_SPA_CMS_PAGE_DATA_POST_PROCESSOR
     if post_processer:
         func = get_function_by_path(post_processer)
         data = func(data=data, request=request)
