@@ -109,18 +109,20 @@ def get_frontend_data_dict_for_plugin(request, plugin, editable):
     if renderer:
         json_data = renderer.render(request=request, plugin=plugin, instance=instance, editable=editable)
 
-    children = []
-    for child_plugin in instance.get_children().order_by("path"):
-        # Parse all children
-        children.append(
-            get_frontend_data_dict_for_plugin(
-                request=request,
-                plugin=child_plugin,
-                editable=editable
+    if hasattr(plugin, 'parse_child_plugins') and plugin.parse_child_plugins:
+        children = []
+        for child_plugin in instance.get_children().order_by('path'):
+            # Parse all children
+            children.append(
+                get_frontend_data_dict_for_plugin(
+                    request=request,
+                    plugin=child_plugin,
+                    editable=editable
+                )
             )
-        )
 
-    json_data['plugins'] = children
+        if children:
+            json_data['plugins'] = children
 
     return json_data
 
