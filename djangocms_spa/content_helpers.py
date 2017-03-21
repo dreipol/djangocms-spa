@@ -99,12 +99,15 @@ def get_frontend_data_dict_for_plugin(request, plugin, editable):
     Returns a serializable data dict of a CMS plugin and all its children. It expects a `render_json_plugin()` method
     from each plugin. Make sure you implement it for your custom plugins and monkey patch all third-party plugins.
     """
+    json_data = {}
     instance, plugin = plugin.get_plugin_instance()
+
+    if not instance:
+        return json_data
+
     renderer = renderer_pool.renderer_for_plugin(plugin)
     if renderer:
         json_data = renderer.render(request=request, plugin=plugin, instance=instance, editable=editable)
-    else:
-        json_data = {}  # Initialize an empty dict if the plugin has no `render_json_plugin()` method.
 
     children = []
     for child_plugin in instance.get_children().order_by("path"):
