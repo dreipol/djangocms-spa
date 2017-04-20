@@ -51,7 +51,11 @@ def get_frontend_data_dict_for_placeholders(placeholders, request, editable=Fals
         if placeholder:
             plugins = []
 
-            for plugin in placeholder.get_plugins(language=request.LANGUAGE_CODE):
+            # We don't use the helper method `placeholder.get_plugins()` because of the wrong order by path.
+            placeholder_plugins = placeholder.cmsplugin_set.filter(language=request.LANGUAGE_CODE).order_by(
+                settings.DJANGOCMS_SPA_PLUGIN_ORDER_FIELD)
+
+            for plugin in placeholder_plugins:
                 # We need the complete cascading structure of the plugins in the frontend. This is why we ignore the
                 # children here and add them later in the loop.
                 if not plugin.parent:
@@ -111,7 +115,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, editable):
 
     if hasattr(plugin, 'parse_child_plugins') and plugin.parse_child_plugins:
         children = []
-        for child_plugin in instance.get_children().order_by('path'):
+        for child_plugin in instance.get_children().order_by(settings.DJANGOCMS_SPA_PLUGIN_ORDER_FIELD):
             # Parse all children
             children.append(
                 get_frontend_data_dict_for_plugin(

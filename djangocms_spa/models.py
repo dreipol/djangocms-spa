@@ -19,6 +19,10 @@ class DjangoCmsSPAConf(AppConf):
     DEFAULT_LIST_CONTAINER_NAME = 'object_list'
     CMS_PAGE_DATA_POST_PROCESSOR = None
     PLACEHOLDER_DATA_POST_PROCESSOR = None
+    # The CMS used the `position` field to order plugins until treebeard was introduced and a `path` field was added.
+    # At the moment the render and structure mode both use `position` to order the plugins but it is very likely that
+    # this is changed in the future.
+    PLUGIN_ORDER_FIELD = 'position'
 
 
 class DjangoCmsMixin(models.Model):
