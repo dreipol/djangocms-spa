@@ -23,6 +23,7 @@ class DjangoCmsSPAConf(AppConf):
     # At the moment the render and structure mode both use `position` to order the plugins but it is very likely that
     # this is changed in the future.
     PLUGIN_ORDER_FIELD = 'position'
+    PARTIAL_CALLBACKS = {}
 
 
 class DjangoCmsMixin(models.Model):
