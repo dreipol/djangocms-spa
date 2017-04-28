@@ -17,7 +17,7 @@ def cache_view(view_func):
 
         response = view_func(view, *args, **kwargs)
 
-        if not view.request.user.is_authenticated():
+        if response.status_code == 200 and not view.request.user.is_authenticated():
             try:
                 set_cache_after_rendering(cache_key, response, settings.DJANGOCMS_SPA_CACHE_TIMEOUT)
             except ContentNotRenderedError:
