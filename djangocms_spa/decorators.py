@@ -9,7 +9,7 @@ from django.utils.decorators import available_attrs
 def cache_view(view_func):
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view_func(view, *args, **kwargs):
-        cache_key = view.request.path
+        cache_key = view.request.get_full_path()
         cached_response = cache.get(cache_key)
 
         if cached_response and not view.request.user.is_authenticated():
