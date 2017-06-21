@@ -3,6 +3,7 @@ import json
 from cms.utils.page_resolver import get_page_from_request
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from rest_framework.views import APIView
@@ -83,12 +84,8 @@ class SpaApiView(APIView):
     template_name = None
 
     @cache_view
-    def dispatch(self, request, **kwargs):
-        # Take the language from the URL kwarg and set it as request language
-        language_code = kwargs.pop('language_code')
-        available_languages = [language[0] for language in settings.LANGUAGES]
-        request.LANGUAGE_CODE = language_code if language_code in available_languages else settings.LANGUAGES[0][0]
-        return super(SpaApiView, self).dispatch(request, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        return super(SpaApiView, self).dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         data = {
