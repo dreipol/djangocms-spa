@@ -28,6 +28,16 @@ Add it to your ``INSTALLED_APPS``:
         ...
     )
 
+Add the Locale middleware (if it isn't already):
+
+.. code-block:: python
+
+    MIDDLEWARE = (
+    ...
+    'django.middleware.locale.LocaleMiddleware',
+    )
+
+
 Set your default template:
 
 .. code-block:: python
