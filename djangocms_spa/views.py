@@ -3,6 +3,7 @@ import json
 from cms.utils.page_resolver import get_page_from_request
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from rest_framework.views import APIView
@@ -79,15 +80,10 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
         return data
 
 
+@method_decorator(cache_view, name='dispatch')
 class SpaApiView(APIView):
     template_name = None
 
-    @cache_view
-    def dispatch(self, request, **kwargs):
-        # Take the language from the URL kwarg and set it as request language
-        return super(SpaApiView, self).dispatch(request, **kwargs)
-    
-    
     def get(self, *args, **kwargs):
         data = {
             'data': self.get_fetched_data()
