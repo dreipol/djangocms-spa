@@ -80,9 +80,12 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
         return data
 
 
-@method_decorator(cache_view, name='dispatch')
 class SpaApiView(APIView):
     template_name = None
+
+    @cache_view
+    def dispatch(self, request, *args, **kwargs):
+        return super(SpaApiView, self).dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         data = {
