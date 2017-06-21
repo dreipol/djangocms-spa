@@ -3,7 +3,6 @@ import json
 from cms.utils.page_resolver import get_page_from_request
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
-from django.utils.decorators import method_decorator
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from rest_framework.views import APIView
