@@ -85,16 +85,8 @@ class SpaApiView(APIView):
     @cache_view
     def dispatch(self, request, **kwargs):
         # Take the language from the URL kwarg and set it as request language
-        self.set_language(kwargs, request)
         return super(SpaApiView, self).dispatch(request, **kwargs)
     
-    def set_language(self, kwargs, request):
-        if hasattr(request, "LANGUAGE_CODE"):
-            language_code = request.LANGUAGE_CODE
-        else:
-            language_code = kwargs.pop('language_code')
-        available_languages = {language[0] for language in settings.LANGUAGES}
-        request.LANGUAGE_CODE = language_code if language_code in available_languages else settings.LANGUAGES[0][0]
     
     def get(self, *args, **kwargs):
         data = {
