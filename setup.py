@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+from io import open
 
 try:
     from setuptools import setup
@@ -41,8 +42,8 @@ if sys.argv[-1] == 'tag':
     os.system("git push --tags")
     sys.exit()
 
-readme = open('README.rst').read()
-history = open('HISTORY.rst').read().replace('.. :changelog:', '')
+readme = open('README.rst', 'r', encoding='utf-8').read()
+history = open('HISTORY.rst', 'r', encoding='utf-8').read().replace('.. :changelog:', '')
 
 setup(
     name='djangocms-spa',
