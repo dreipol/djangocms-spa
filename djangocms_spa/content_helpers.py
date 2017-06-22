@@ -176,7 +176,8 @@ def get_frontend_data_dict_for_partials(partials, request, editable=False, rende
             static_placeholder_names.append(partial)
 
     # Get the data of all static placeholders
-    use_static_placeholder_draft = request.toolbar.edit_mode and request.user.has_perm('cms.edit_static_placeholder')
+    use_static_placeholder_draft = (hasattr(request, 'toolbar') and request.toolbar.edit_mode and
+                                    request.user.has_perm('cms.edit_static_placeholder'))
     static_placeholders = []
     for static_placeholder_name in static_placeholder_names:
         static_placeholders.append(get_static_placeholder(static_placeholder_name, use_static_placeholder_draft))
