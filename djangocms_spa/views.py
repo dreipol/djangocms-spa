@@ -79,12 +79,17 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
         return data
 
 
-class SpaApiView(APIView):
-    template_name = None
-
+class CachedView(APIView):
+    add_language_code = True
+    cache_key = None
+    
     @cache_view
     def dispatch(self, request, *args, **kwargs):
-        return super(SpaApiView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SpaApiView(CachedView):
+    template_name = None
 
     def get(self, *args, **kwargs):
         data = {
