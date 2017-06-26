@@ -16,8 +16,7 @@ def cache_view(view_func):
             cache_key = request.get_full_path()
 
         if view.add_language_code:
-            language_code = request.LANGUAGE_CODE
-            cache_key += ':{lang}'.format(lang=language_code)
+            cache_key += ':%s' % request.LANGUAGE_CODE
 
         cached_response = cache.get(cache_key)
 
