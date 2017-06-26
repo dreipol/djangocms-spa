@@ -8,10 +8,16 @@ from django.utils.decorators import available_attrs
 
 def cache_view(view_func):
     @wraps(view_func, assigned=available_attrs(view_func))
-    def _wrapped_view_func(view, *args, **kwargs):
+    def _wrapped_view_func(view: 'CachedApiView', *args, **kwargs):
         request = view.request
-        language_code = request.LANGUAGE_CODE
-        cache_key = '{path}:{lang}'.format(path=request.get_full_path(), lang=language_code)
+
+        cache_key = view.get_cache_key()
+        if not cache_key:
+            cache_key = request.get_full_path()
+
+        if view.add_language_code:
+            cache_key += ':%s' % request.LANGUAGE_CODE
+
         cached_response = cache.get(cache_key)
 
         if cached_response and not request.user.is_authenticated():
