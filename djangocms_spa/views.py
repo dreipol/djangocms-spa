@@ -79,16 +79,19 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
         return data
 
 
-class CachedView(APIView):
+class CachedApiView(APIView):
     add_language_code = True
     cache_key = None
-    
+
     @cache_view
     def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+        return super(CachedApiView, self).dispatch(request, *args, **kwargs)
+
+    def get_cache_key(self):
+        return self.cache_key
 
 
-class SpaApiView(CachedView):
+class SpaApiView(CachedApiView):
     template_name = None
 
     def get(self, *args, **kwargs):
@@ -114,6 +117,9 @@ class SpaApiView(CachedView):
             request=self.request,
             editable=self.request.user.has_perm('cms.edit_static_placeholder'),
         )
+
+    def get_fetched_data(self):
+        return {}
 
     def get_template_names(self):
         return self.template_name
