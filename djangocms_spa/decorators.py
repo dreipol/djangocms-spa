@@ -16,7 +16,11 @@ def cache_view(view_func):
             cache_key = request.get_full_path()
 
         if view.add_language_code:
-            cache_key += ':%s' % request.LANGUAGE_CODE
+            try:
+                language_code = request.LANGUAGE_CODE
+            except AttributeError:
+                language_code = settings.LANGUAGE_CODE
+            cache_key += ':%s' % language_code
 
         cached_response = cache.get(cache_key)
 
