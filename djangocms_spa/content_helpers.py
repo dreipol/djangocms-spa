@@ -22,7 +22,7 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, edita
     data = {
         'containers': placeholder_frontend_data_dict,
         'meta': {
-            'title': cms_page_title.title,
+            'title': cms_page_title.page_title if cms_page_title.page_title else cms_page_title.title,
             'description': cms_page_title.meta_description or '',
         }
     }
