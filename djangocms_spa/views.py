@@ -79,19 +79,7 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
         return data
 
 
-class CachedApiView(APIView):
-    add_language_code = True
-    cache_key = None
-
-    @cache_view
-    def dispatch(self, request, *args, **kwargs):
-        return super(CachedApiView, self).dispatch(request, *args, **kwargs)
-
-    def get_cache_key(self):
-        return self.cache_key
-
-
-class SpaApiView(CachedApiView):
+class SpaApiView(APIView):
     template_name = None
 
     def get(self, *args, **kwargs):
@@ -125,7 +113,19 @@ class SpaApiView(CachedApiView):
         return self.template_name
 
 
-class SpaCmsPageDetailApiView(SpaApiView):
+class CachedSpaApiView(SpaApiView):
+    add_language_code = True
+    cache_key = None
+
+    @cache_view
+    def dispatch(self, request, *args, **kwargs):
+        return super(CachedSpaApiView, self).dispatch(request, *args, **kwargs)
+
+    def get_cache_key(self):
+        return self.cache_key
+
+
+class SpaCmsPageDetailApiView(CachedSpaApiView):
     cms_page = None
     cms_page_title = None
 
@@ -156,7 +156,7 @@ class SpaCmsPageDetailApiView(SpaApiView):
         return self.cms_page.get_template()
 
 
-class SpaListApiView(MultipleObjectSpaMixin, SpaApiView):
+class SpaListApiView(MultipleObjectSpaMixin, CachedSpaApiView):
     def get_fetched_data(self):
         data = {}
 
@@ -167,7 +167,7 @@ class SpaListApiView(MultipleObjectSpaMixin, SpaApiView):
         return data
 
 
-class SpaDetailApiView(SingleObjectSpaMixin, SpaApiView):
+class SpaDetailApiView(SingleObjectSpaMixin, CachedSpaApiView):
     def get_fetched_data(self):
         data = {}
 
