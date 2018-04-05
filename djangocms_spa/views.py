@@ -91,11 +91,16 @@ class SpaApiView(APIView):
         if partials:
             data['partials'] = partials
 
-        return HttpResponse(
+        response = HttpResponse(
             content=json.dumps(data),
             content_type='application/json',
             status=200
         )
+
+        if hasattr(settings, 'GIT_COMMIT_HASH'):
+            response['X-App-Version'] = settings.GIT_COMMIT_HASH
+
+        return response
 
     def get_partials(self):
         partial_names = get_partial_names_for_template(template=self.get_template_names(), get_all=False,
