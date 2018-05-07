@@ -27,6 +27,10 @@ def get_frontend_data_dict_for_cms_page(cms_page, cms_page_title, request, edita
         }
     }
 
+    language_links = get_language_links(cms_page=cms_page, request=request)
+    if language_links:
+        data['meta']['languages'] = language_links
+
     if placeholder_frontend_data_dict:
         data['containers'] = placeholder_frontend_data_dict
 
@@ -221,3 +225,11 @@ def get_global_placeholder_data(placeholder_frontend_data_dict):
 
     func = get_function_by_path(post_processer)
     return func(placeholder_frontend_data_dict=placeholder_frontend_data_dict)
+
+
+def get_language_links(cms_page, request):
+    language_links = {}
+    for language_code, language in settings.LANGUAGES:
+        if language_code != request.LANGUAGE_CODE:
+            language_links[language_code] = cms_page.get_absolute_url(language=language_code)
+    return language_links

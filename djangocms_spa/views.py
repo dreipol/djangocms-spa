@@ -25,10 +25,18 @@ class ObjectPermissionMixin(object):
 
 class MetaDataMixin(object):
     def get_meta_data(self):
-        return {
+        meta_data = {
             'title': '',
             'description': ''
         }
+
+        language_links = self.get_translated_urls()
+        if language_links:
+            meta_data['languages'] = language_links
+        return meta_data
+
+    def get_translated_urls(self):
+        return {}
 
 
 class MultipleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, MultipleObjectMixin):
@@ -77,6 +85,13 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
 
         data['meta'] = self.get_meta_data()
         return data
+
+    def get_translated_urls(self):
+        language_links = {}
+        for language_code, language in settings.LANGUAGES:
+            if language_code != self.request.LANGUAGE_CODE:
+                language_links[language_code] = self.object.get_absolute_url(language=language_code)
+        return language_links
 
 
 class SpaApiView(APIView):
