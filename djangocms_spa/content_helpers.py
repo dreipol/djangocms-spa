@@ -118,7 +118,7 @@ def get_frontend_data_dict_for_plugin(request, plugin, editable):
         json_data = renderer.render(request=request, plugin=plugin, instance=instance, editable=editable)
 
     if hasattr(plugin, 'parse_child_plugins') and plugin.parse_child_plugins:
-        children = []
+        children = json_data.get('plugins', [])
         for child_plugin in instance.get_children().order_by(settings.DJANGOCMS_SPA_PLUGIN_ORDER_FIELD):
             # Parse all children
             children.append(
