@@ -1,4 +1,5 @@
-from django.forms import CheckboxInput, CheckboxSelectMultiple, HiddenInput, RadioSelect, Textarea, TextInput, Select
+from django.forms import (CheckboxInput, CheckboxSelectMultiple, HiddenInput, RadioSelect, Textarea, TextInput, Select,
+                          SelectMultiple)
 
 from .cms_plugins import SPAPluginMixin
 
@@ -111,6 +112,8 @@ class SPAFormFieldWidgetRenderer(object):
             return 'cmp-form-field-bool'
         elif issubclass(widget_class, RadioSelect):
             return 'cmp-form-field-bool'
+        elif issubclass(type(self.field.widget), SelectMultiple):
+            return 'cmp-form-field-checkbox'
         elif issubclass(type(self.field.widget), Textarea):
             return 'cmp-form-field-textarea'
         elif issubclass(type(self.field.widget), Select):
