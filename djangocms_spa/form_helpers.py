@@ -17,7 +17,7 @@ def get_serialized_choices_for_field(field):
         label = str(choice[1])
         value = str(choice[0])
 
-        if value:
+        if label and value:
             serialized_choices.append({
                 'label': label,
                 'val': value
