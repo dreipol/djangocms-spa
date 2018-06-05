@@ -1,5 +1,5 @@
-from django.forms import (CheckboxInput, CheckboxSelectMultiple, HiddenInput, RadioSelect, Textarea, TextInput, Select,
-                          SelectMultiple)
+from django.forms import (CheckboxInput, CheckboxSelectMultiple, HiddenInput, NumberInput, RadioSelect, Textarea,
+                          TextInput, Select, SelectMultiple)
 
 from .cms_plugins import SPAPluginMixin
 
@@ -105,6 +105,8 @@ class SPAFormFieldWidgetRenderer(object):
         widget_class = type(self.field.widget)
 
         if issubclass(widget_class, TextInput):
+            return 'cmp-form-field-input'
+        elif issubclass(widget_class, NumberInput):
             return 'cmp-form-field-input'
         elif issubclass(widget_class, CheckboxInput):
             return 'cmp-form-field-bool'
