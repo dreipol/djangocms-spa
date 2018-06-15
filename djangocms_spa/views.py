@@ -45,7 +45,7 @@ class MetaDataMixin(object):
         for language_code, language in settings.LANGUAGES:
             if language_code != request_language:
                 activate(language_code)
-                language_links[language_code] = reverse(url_name)
+                language_links[language_code] = reverse(url_name, args=self.args, kwargs=self.kwargs)
         activate(request_language)
         return language_links
 
