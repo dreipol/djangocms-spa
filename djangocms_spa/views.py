@@ -3,6 +3,8 @@ import json
 from cms.utils.page_resolver import get_page_from_request
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
+from django.utils.translation import activate
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 from rest_framework.views import APIView
@@ -36,7 +38,16 @@ class MetaDataMixin(object):
         return meta_data
 
     def get_translated_urls(self):
-        return {}
+        request_language = self.request.LANGUAGE_CODE
+        url_name = self.request.resolver_match.url_name
+
+        language_links = {}
+        for language_code, language in settings.LANGUAGES:
+            if language_code != request_language:
+                activate(language_code)
+                language_links[language_code] = reverse(url_name)
+        activate(request_language)
+        return language_links
 
 
 class MultipleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, MultipleObjectMixin):
@@ -85,13 +96,6 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
 
         data['meta'] = self.get_meta_data()
         return data
-
-    def get_translated_urls(self):
-        language_links = {}
-        for language_code, language in settings.LANGUAGES:
-            if language_code != self.request.LANGUAGE_CODE:
-                language_links[language_code] = self.object.get_absolute_url(language=language_code)
-        return language_links
 
 
 class SpaApiView(APIView):
