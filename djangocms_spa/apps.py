@@ -20,11 +20,11 @@ class DjangoCmsSpaConfig(AppConfig):
             'multiline': True,
         }
 
-        Select.render_spa = lambda self, field, initial: {
+        Select.render_spa = lambda self, field, initial=None: {
             'items': get_serialized_choices_for_field(field=field),
             'placeholder': get_placeholder_for_choices_field(field)
         }
 
-        SelectMultiple.render_spa = lambda self, field, initial = None: {
+        SelectMultiple.render_spa = lambda self, field, initial=None: {
             'items': get_serialized_choices_for_field(field=field),
         }
