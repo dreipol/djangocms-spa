@@ -203,7 +203,6 @@ class SpaApiModelForm(six.with_metaclass(ModelFormMetaclass, BaseModelForm)):
         return {
             'component': 'cmp-form-submit',
             'label': str(self.submit_button_label),
-            'recaptcha_sitekey': False
         }
 
     def _get_form_state_and_messages_dict(self):
