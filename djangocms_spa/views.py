@@ -3,7 +3,7 @@ import json
 from cms.utils.page_resolver import get_page_from_request
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.utils.translation import activate
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -39,7 +39,7 @@ class MetaDataMixin(object):
 
     def get_translated_urls(self):
         request_language = self.request.LANGUAGE_CODE
-        url_name = self.request.resolver_match.url_name
+        url_name = resolve(self.request.path).url_name
 
         language_links = {}
         for language_code, language in settings.LANGUAGES:
