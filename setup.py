@@ -57,7 +57,11 @@ setup(
         'djangocms_spa',
     ],
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        "django-cms>=3.0",
+        "djangorestframework>=3.5.0",
+        "django-appconf>=1.0.1",
+    ],
     license="MIT",
     zip_safe=False,
     keywords='djangocms-spa',
