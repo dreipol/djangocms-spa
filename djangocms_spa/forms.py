@@ -153,6 +153,7 @@ class SpaApiModelForm(six.with_metaclass(ModelFormMetaclass, BaseModelForm)):
     default_validation_error = DEFAULT_VALIDATION_ERROR
     no_cookie_message = NO_COOKIE_MESSAGE
     submit_button_label = SUBMIT_BUTTON_LABEL
+    show_general_error_message = True
 
     def get_api_url(self):
         return ''
@@ -213,8 +214,7 @@ class SpaApiModelForm(six.with_metaclass(ModelFormMetaclass, BaseModelForm)):
         }
 
         error_messages = []
-        if self.errors:
-            # We need a general hint if any error occured
+        if self.errors and self.show_general_error_message:
             error_messages.append(str(self.default_validation_error))
         non_field_errors = self.errors.get(ALL_FIELDS)
         if non_field_errors:
