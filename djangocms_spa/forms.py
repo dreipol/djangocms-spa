@@ -113,7 +113,7 @@ class ReCaptchaFormMixin(object):
     def clean(self):
         if settings.RECAPTCHA_IS_ACTIVE:
             self.verify()
-        super(ReCaptchaFormMixin, self).clean()
+        return super(ReCaptchaFormMixin, self).clean()
 
     def verify(self):
         try:
