@@ -24,10 +24,10 @@ def get_version(*file_paths):
 
 version = get_version("djangocms_spa", "__init__.py")
 
-
 if sys.argv[-1] == 'publish':
     try:
         import wheel
+
         print("Wheel version: ", wheel.__version__)
     except ImportError:
         print('Wheel library missing. Please run "pip install wheel"')
@@ -57,7 +57,9 @@ setup(
         'djangocms_spa',
     ],
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'requests>=2'
+    ],
     license="MIT",
     zip_safe=False,
     keywords='djangocms-spa',
