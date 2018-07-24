@@ -1,3 +1,4 @@
+import abc
 import json
 
 from cms.utils.page_resolver import get_page_from_request
@@ -200,3 +201,35 @@ class SpaDetailApiView(SingleObjectSpaMixin, CachedSpaApiView):
             data.update(view_data)
 
         return data
+
+
+class SpaFormApiView(SpaApiView, abc.ABC):
+    form_class = None
+
+    def __init__(self, *args, **kwargs):
+        if not self.form_class:
+            raise NotImplementedError("form_class has to be set in subclasses")
+
+        super().__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST, request=request)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.save()
+        self.post_save(form)
+        return JsonResponse(data=(form.get_api_response_data_dict()), status=200)
+
+    def form_invalid(self, form):
+        return JsonResponse(data=form.get_api_response_data_dict(), status=400)
+
+    def post_save(self, form):
+        """
+        This method is called after the form was saved. You can use it to send emails...
+        :param form:
+        """
+        pass
