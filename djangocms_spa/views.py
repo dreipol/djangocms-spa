@@ -1,4 +1,3 @@
-import abc
 import json
 
 from cms.utils.page_resolver import get_page_from_request
@@ -203,7 +202,7 @@ class SpaDetailApiView(SingleObjectSpaMixin, CachedSpaApiView):
         return data
 
 
-class SpaFormApiView(SpaApiView, abc.ABC):
+class SpaFormApiView(SpaApiView):
     form_class = None
 
     def __init__(self, *args, **kwargs):
