@@ -26,6 +26,8 @@ class ObjectPermissionMixin(object):
 
 
 class MetaDataMixin(object):
+    url_name = ''
+
     def get_meta_data(self):
         meta_data = {
             'title': '',
@@ -39,7 +41,10 @@ class MetaDataMixin(object):
 
     def get_translated_urls(self):
         request_language = self.request.LANGUAGE_CODE
-        url_name = resolve(self.request.path).url_name
+        if self.url_name:
+            url_name = self.url_name
+        else:
+            url_name = resolve(self.request.path).url_name
 
         language_links = {}
         for language_code, language in settings.LANGUAGES:
