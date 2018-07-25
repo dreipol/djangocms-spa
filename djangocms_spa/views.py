@@ -208,8 +208,7 @@ class SpaFormApiView(SpaApiView):
     def __init__(self, *args, **kwargs):
         if not self.form_class:
             raise NotImplementedError("form_class has to be set in subclasses")
-
-        super().__init__(*args, **kwargs)
+        super(SpaFormApiView, self).__init__(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(data=request.POST, request=request)
