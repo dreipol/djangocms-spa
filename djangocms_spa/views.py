@@ -163,7 +163,7 @@ class SpaCmsPageDetailApiView(CachedSpaApiView):
         draft = use_draft(request)
         preview = 'preview' in request.GET
         try:
-            self.cms_page = get_page_from_path(kwargs.get('path'), preview, draft)
+            self.cms_page = get_page_from_path(kwargs.get('path', ''), preview, draft)
             self.cms_page_title = self.cms_page.title_set.get(language=request.LANGUAGE_CODE)
         except AttributeError:
             return JsonResponse(data={}, status=404)
