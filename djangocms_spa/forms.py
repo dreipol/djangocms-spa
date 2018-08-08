@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import ALL_FIELDS, BaseModelForm, forms
 from django.forms.models import ModelFormMetaclass
+from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
 from .renderer import SPAFormFieldWidgetRenderer
@@ -154,6 +155,11 @@ class SpaApiModelForm(six.with_metaclass(ModelFormMetaclass, BaseModelForm)):
     no_cookie_message = NO_COOKIE_MESSAGE
     submit_button_label = SUBMIT_BUTTON_LABEL
     show_general_error_message = True
+
+    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
+                 label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None, request=None):
+        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
+                         use_required_attribute)
 
     def get_api_url(self):
         return ''
