@@ -134,6 +134,8 @@ class SPAFormFieldWidgetRenderer(object):
             return str(self.form.data[self.name])
         elif self.name in self.form.initial.keys():
             return self.form.initial[self.name]
+        elif self.field.initial is not None:
+            return self.field.initial
         return ''
 
     def _get_messages_for_field(self):

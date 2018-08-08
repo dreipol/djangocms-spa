@@ -1,6 +1,7 @@
 import json
 
-from cms.utils.page_resolver import get_page_from_request
+from cms.utils.moderator import use_draft
+from cms.utils.page_resolver import get_page_from_path
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.urls import resolve, reverse
@@ -26,6 +27,8 @@ class ObjectPermissionMixin(object):
 
 
 class MetaDataMixin(object):
+    url_name = ''
+
     def get_meta_data(self):
         meta_data = {
             'title': '',
@@ -39,7 +42,10 @@ class MetaDataMixin(object):
 
     def get_translated_urls(self):
         request_language = self.request.LANGUAGE_CODE
-        url_name = resolve(self.request.path).url_name
+        if self.url_name:
+            url_name = self.url_name
+        else:
+            url_name = resolve(self.request.path).url_name
 
         language_links = {}
         for language_code, language in settings.LANGUAGES:
@@ -154,8 +160,10 @@ class SpaCmsPageDetailApiView(CachedSpaApiView):
     cms_page_title = None
 
     def get(self, request, **kwargs):
+        draft = use_draft(request)
+        preview = 'preview' in request.GET
         try:
-            self.cms_page = get_page_from_request(request, use_path=kwargs.get('path', ''))
+            self.cms_page = get_page_from_path(kwargs.get('path', ''), preview, draft)
             self.cms_page_title = self.cms_page.title_set.get(language=request.LANGUAGE_CODE)
         except AttributeError:
             return JsonResponse(data={}, status=404)
@@ -200,3 +208,34 @@ class SpaDetailApiView(SingleObjectSpaMixin, CachedSpaApiView):
             data.update(view_data)
 
         return data
+
+
+class SpaFormApiView(SpaApiView):
+    form_class = None
+
+    def __init__(self, *args, **kwargs):
+        if not self.form_class:
+            raise NotImplementedError("form_class has to be set in subclasses")
+        super(SpaFormApiView, self).__init__(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST, request=request)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.save()
+        self.post_save(form)
+        return JsonResponse(data=(form.get_api_response_data_dict()), status=200)
+
+    def form_invalid(self, form):
+        return JsonResponse(data=form.get_api_response_data_dict(), status=400)
+
+    def post_save(self, form):
+        """
+        This method is called after the form was saved. You can use it to send emails...
+        :param form:
+        """
+        pass
