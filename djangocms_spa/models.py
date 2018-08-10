@@ -1,10 +1,11 @@
+from appconf import AppConf
 from cms.utils.urlutils import admin_reverse
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from menus.menu_pool import MenuRenderer
 
-from appconf import AppConf
+from djangocms_spa.json import LazyJSONEncoder
 
 
 class DjangoCmsSPAConf(AppConf):
@@ -24,6 +25,7 @@ class DjangoCmsSPAConf(AppConf):
     # this is changed in the future.
     PLUGIN_ORDER_FIELD = 'position'
     PARTIAL_CALLBACKS = {}
+    JSON_ENCODER = LazyJSONEncoder
 
 
 class DjangoCmsMixin(models.Model):
@@ -75,5 +77,6 @@ def set_menu_renderer_context(self, context):
     Monkey patch the MenuRenderer by adding a helper method to store the context.
     """
     self.context = context
+
 
 MenuRenderer.set_context = set_menu_renderer_context
