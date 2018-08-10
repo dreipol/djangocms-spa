@@ -28,11 +28,13 @@ class ObjectPermissionMixin(object):
 
 class MetaDataMixin(object):
     url_name = ''
+    page_title = ''
+    page_description = ''
 
     def get_meta_data(self):
         meta_data = {
-            'title': '',
-            'description': ''
+            'title': self.page_title,
+            'description': self.page_description
         }
 
         language_links = self.get_translated_urls()
@@ -117,7 +119,7 @@ class SpaApiView(APIView):
             data['partials'] = partials
 
         response = HttpResponse(
-            content=json.dumps(data),
+            content=json.dumps(data, cls=settings.DJANGOCMS_SPA_JSON_ENCODER),
             content_type='application/json',
             status=200
         )
