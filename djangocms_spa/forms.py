@@ -1,6 +1,5 @@
 import requests
 import six
-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import ALL_FIELDS, BaseModelForm, forms
@@ -8,7 +7,6 @@ from django.forms.models import ModelFormMetaclass
 from django.utils.translation import ugettext_lazy as _
 
 from .renderer import SPAFormFieldWidgetRenderer
-
 
 DEFAULT_VALIDATION_ERROR = _('Invalid data')
 NO_COOKIE_MESSAGE = _('Please activate cookies to submit the form.')
@@ -140,7 +138,7 @@ class ReCaptchaFormMixin(object):
             if response_json_data.get('success'):
                 return True
 
-        raise ValidationError('Invalid reCAPTCHA')
+        raise ValidationError(self.invalid_recaptcha)
 
     def get_submit_button(self):
         data = super(ReCaptchaFormMixin, self).get_submit_button()
