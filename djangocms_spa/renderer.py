@@ -1,5 +1,4 @@
-from django.forms import (CheckboxInput, CheckboxSelectMultiple, EmailInput, HiddenInput, NumberInput, PasswordInput,
-                          RadioSelect, Textarea, TextInput, Select, SelectMultiple)
+from django.conf import settings
 
 from .cms_plugins import SPAPluginMixin
 
@@ -50,6 +49,7 @@ class MixinPluginRenderer(BaseSPARenderer):
     """
     Renders the plugins which use the SPAPluginMixin.
     """
+
     def __init__(self, plugin_class: SPAPluginMixin):
         super().__init__()
         self.plugin_class = plugin_class
@@ -103,29 +103,8 @@ class SPAFormFieldWidgetRenderer(object):
 
     def _get_component_name(self):
         widget_class = type(self.field.widget)
-
-        if issubclass(widget_class, TextInput) or issubclass(widget_class, PasswordInput):
-            return 'cmp-form-field-input'
-        elif issubclass(widget_class, NumberInput):
-            return 'cmp-form-field-input'
-        elif issubclass(widget_class, EmailInput):
-            return 'cmp-form-field-input'
-        elif issubclass(widget_class, CheckboxInput):
-            return 'cmp-form-field-bool'
-        elif issubclass(widget_class, CheckboxSelectMultiple):
-            return 'cmp-form-field-bool'
-        elif issubclass(widget_class, RadioSelect):
-            return 'cmp-form-field-bool'
-        elif issubclass(type(self.field.widget), SelectMultiple):
-            return 'cmp-form-field-checkbox'
-        elif issubclass(type(self.field.widget), Textarea):
-            return 'cmp-form-field-textarea'
-        elif issubclass(type(self.field.widget), Select):
-            return 'cmp-form-field-select'
-        elif issubclass(type(self.field.widget), HiddenInput):
-            return 'cmp-form-field-hidden'
-        else:
-            return ''
+        module_path = '.'.join([widget_class.__module__, widget_class.__name__])
+        return settings.DJANGOCMS_SPA_COMPONENT_NAMES.get(module_path, '')
 
     def _get_value_for_field(self):
         if hasattr(self.form, 'cleaned_data') and self.name in self.form.cleaned_data.keys():
