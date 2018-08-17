@@ -72,6 +72,14 @@ Configure your custom partials:
     }
 
 
+Render the initial app version (commit hash) in the template so your client can check it:
+
+.. code-block:: html
+
+    {% load app_version_tags %}
+    {% app_version %}
+
+
 Plugins
 -------
 
