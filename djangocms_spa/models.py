@@ -34,7 +34,7 @@ class DjangoCmsSPAConf(AppConf):
         component_names = {
             'django.forms.widgets.CheckboxInput': component_prefix + 'form-field-toggle',
             'django.forms.widgets.CheckboxSelectMultiple': component_prefix + 'form-field-checkbox',
-            'django.forms.widgets.EmailInput': component_prefix + 'form-field-hidden',
+            'django.forms.widgets.EmailInput': component_prefix + 'form-field-input',
             'django.forms.widgets.HiddenInput': component_prefix + 'form-field-hidden',
             'django.forms.widgets.NumberInput': component_prefix + 'form-field-input',
             'django.forms.widgets.PasswordInput': component_prefix + 'form-field-input',
