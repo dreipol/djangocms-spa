@@ -1,10 +1,11 @@
 import json
+from contextlib import suppress
 
 from cms.utils.moderator import use_draft
 from cms.utils.page_resolver import get_page_from_path
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
-from django.urls import resolve, reverse
+from django.urls import NoReverseMatch, resolve, reverse
 from django.utils.translation import activate
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -53,7 +54,8 @@ class MetaDataMixin(object):
         for language_code, language in settings.LANGUAGES:
             if language_code != request_language:
                 activate(language_code)
-                language_links[language_code] = reverse(url_name, args=self.args, kwargs=self.kwargs)
+                with suppress(NoReverseMatch):
+                    language_links[language_code] = reverse(url_name, args=self.args, kwargs=self.kwargs)
         activate(request_language)
         return language_links
 
