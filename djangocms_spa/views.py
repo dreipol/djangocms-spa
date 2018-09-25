@@ -2,15 +2,17 @@ import json
 from contextlib import suppress
 
 from cms.utils.moderator import use_draft
-from cms.utils.page_resolver import get_page_from_path
+from cms.utils.page_resolver import get_page_from_path, get_page_from_request
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.urls import NoReverseMatch, resolve, reverse
 from django.utils.translation import activate
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.views import APIView
 
+from djangocms_spa.serializers import PageSerializer
 from .content_helpers import (get_frontend_data_dict_for_cms_page, get_frontend_data_dict_for_partials,
                               get_partial_names_for_template)
 from .decorators import cache_view
@@ -147,16 +149,31 @@ class SpaApiView(APIView):
         return self.template_name
 
 
-class CachedSpaApiView(SpaApiView):
+class CacheMixin(object):
     add_language_code = True
     cache_key = None
 
     @cache_view
     def dispatch(self, request, *args, **kwargs):
-        return super(CachedSpaApiView, self).dispatch(request, *args, **kwargs)
+        return super(CacheMixin, self).dispatch(request, *args, **kwargs)
 
     def get_cache_key(self):
         return self.cache_key
+
+
+class CachedSpaApiView(CacheMixin, SpaApiView):
+    pass
+
+
+class PageDetailAPIView(RetrieveAPIView):
+    serializer_class = PageSerializer
+
+    def get_object(self):
+        path = self.kwargs.get('path', '')
+        if path == settings.DJANGOCMS_SPA_HOME_PATH:
+            path = ''
+
+        return get_page_from_request(self.request, use_path=path)
 
 
 class SpaCmsPageDetailApiView(CachedSpaApiView):

@@ -1,4 +1,5 @@
 from appconf import AppConf
+from cms.models import CMSPlugin
 from cms.utils.urlutils import admin_reverse
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -6,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from menus.menu_pool import MenuRenderer
 
 from djangocms_spa.json import LazyJSONEncoder
+from djangocms_spa.serializers import GenericPluginSerializer
 
 
 class DjangoCmsSPAConf(AppConf):
@@ -28,6 +30,8 @@ class DjangoCmsSPAConf(AppConf):
     JSON_ENCODER = LazyJSONEncoder
     COMPONENT_PREFIX = 'dyn-'
     COMPONENT_NAMES = {}
+    USE_SERIALIZERS = False
+    HOME_PATH = 'home'
 
     def configure(self):
         component_prefix = self.configured_data['COMPONENT_PREFIX']
@@ -50,6 +54,23 @@ class DjangoCmsSPAConf(AppConf):
         self.configured_data['COMPONENT_NAMES'] = component_names
 
         return self.configured_data
+
+
+class SPAPlugin(object):
+    @classmethod
+    def get_serializer(cls):
+        class GenericSerializer(GenericPluginSerializer):
+            class Meta:
+                fields = '__all__'
+                model = cls
+
+        return GenericSerializer
+
+    def spa_data(self, data):
+        """
+        Override this method to manipulate the serialized data.
+        """
+        return data
 
 
 class DjangoCmsMixin(models.Model):
