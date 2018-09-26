@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from cms.models import CMSPlugin, Page, Placeholder
 from django.conf import settings
+from django.utils.translation import get_language
 from rest_framework import serializers
 
 from .fields import CheckboxField, EmailField, InputField, RadioField, TextareaField
@@ -96,6 +97,13 @@ class PageSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance=instance)
         representation['containers'] = representation.pop('placeholders')
+
+        page_title = instance.title_set.get(language=get_language())
+        representation['meta'] = {
+            'title': page_title.title,
+            'description': page_title.meta_description,
+            'languages': {code: instance.get_absolute_url(language=code) for code, path in settings.LANGUAGES}
+        }
         return representation
 
 
