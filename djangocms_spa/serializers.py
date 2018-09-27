@@ -88,11 +88,17 @@ class PlaceholderSerializer(serializers.ModelSerializer):
 
 class PageSerializer(serializers.ModelSerializer):
     # TODO: add partials
-    placeholders = PlaceholderSerializer(many=True, read_only=True)
+    placeholders = serializers.SerializerMethodField()
 
     class Meta:
         model = Page
         fields = ('placeholders',)
+
+    def get_placeholders(self, obj):
+        placeholders = {}
+        for placeholder in obj.placeholders.all():
+            placeholders[placeholder.slot] = PlaceholderSerializer(instance=placeholder).data
+        return placeholders
 
     def to_representation(self, instance):
         representation = super().to_representation(instance=instance)
