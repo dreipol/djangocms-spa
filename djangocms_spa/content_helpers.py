@@ -182,9 +182,9 @@ def get_frontend_data_dict_for_partials(partials, request, editable=False, rende
     partial_data = get_frontend_data_dict_for_placeholders(
         placeholders=static_placeholders,
         request=request,
-        editable=editable,
+        editable=editable
     )
-    partial_data.update(get_custom_partial_data(custom_partial_names, request))
+    partial_data.update(get_custom_partial_data(custom_partial_names, request, renderer=renderer))
     return partial_data
 
 
@@ -200,12 +200,12 @@ def split_static_placeholders_and_custom_partials(partials):
     return static_placeholder_names, custom_partial_names
 
 
-def get_custom_partial_data(partial_names, request):
+def get_custom_partial_data(partial_names, request, renderer=None):
     partials = {}
     for partial_name in partial_names:
         dotted_function_module_path = settings.DJANGOCMS_SPA_PARTIAL_CALLBACKS[partial_name]
         callback_function = get_function_by_path(dotted_function_module_path)
-        partials[partial_name] = callback_function(request)
+        partials[partial_name] = callback_function(request, renderer=renderer)
     return partials
 
 
