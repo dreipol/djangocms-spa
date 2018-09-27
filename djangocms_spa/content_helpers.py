@@ -3,8 +3,7 @@ from urllib.request import url2pathname
 from cms.models import StaticPlaceholder
 from django.conf import settings
 
-from djangocms_spa.renderer_pool import renderer_pool
-
+from .renderer_pool import renderer_pool
 from .utils import get_function_by_path
 
 
@@ -171,13 +170,7 @@ def get_frontend_data_dict_for_partials(partials, request, editable=False, rende
     """
 
     # Split static placeholders from partials that have a custom callback.
-    static_placeholder_names = []
-    custom_callback_partials = []
-    for partial in partials:
-        if partial in settings.DJANGOCMS_SPA_PARTIAL_CALLBACKS.keys():
-            custom_callback_partials.append(partial)
-        else:
-            static_placeholder_names.append(partial)
+    static_placeholder_names, custom_partial_names = split_static_placeholders_and_custom_partials(partials)
 
     # Get the data of all static placeholders
     use_static_placeholder_draft = (hasattr(request, 'toolbar') and request.toolbar.edit_mode and
@@ -189,16 +182,31 @@ def get_frontend_data_dict_for_partials(partials, request, editable=False, rende
     partial_data = get_frontend_data_dict_for_placeholders(
         placeholders=static_placeholders,
         request=request,
-        editable=editable
+        editable=editable,
     )
-
-    # Get the data of all partials that have a custom callback.
-    for partial_settings_key in custom_callback_partials:
-        dotted_function_module_path = settings.DJANGOCMS_SPA_PARTIAL_CALLBACKS[partial_settings_key]
-        callback_function = get_function_by_path(dotted_function_module_path)
-        partial_data[partial_settings_key] = callback_function(request, renderer)
-
+    partial_data.update(get_custom_partial_data(custom_partial_names, request))
     return partial_data
+
+
+def split_static_placeholders_and_custom_partials(partials):
+    # Split static placeholders from partials that have a custom callback.
+    static_placeholder_names = []
+    custom_partial_names = []
+    for partial in partials:
+        if partial in settings.DJANGOCMS_SPA_PARTIAL_CALLBACKS.keys():
+            custom_partial_names.append(partial)
+        else:
+            static_placeholder_names.append(partial)
+    return static_placeholder_names, custom_partial_names
+
+
+def get_custom_partial_data(partial_names, request):
+    partials = {}
+    for partial_name in partial_names:
+        dotted_function_module_path = settings.DJANGOCMS_SPA_PARTIAL_CALLBACKS[partial_name]
+        callback_function = get_function_by_path(dotted_function_module_path)
+        partials[partial_name] = callback_function(request)
+    return partials
 
 
 def get_static_placeholder(static_placeholder_slot_name, get_draft_data=False):

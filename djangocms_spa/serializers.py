@@ -4,7 +4,10 @@ from cms.models import CMSPlugin, Page, Placeholder
 from django.conf import settings
 from django.utils.translation import get_language
 from rest_framework import serializers
+from rest_framework.fields import empty
 
+from .content_helpers import (get_custom_partial_data, get_partial_names_for_template, get_static_placeholder,
+                              split_static_placeholders_and_custom_partials)
 from .fields import CheckboxField, EmailField, InputField, RadioField, TextareaField
 
 
@@ -87,18 +90,42 @@ class PlaceholderSerializer(serializers.ModelSerializer):
 
 
 class PageSerializer(serializers.ModelSerializer):
-    # TODO: add partials
+    partials = serializers.SerializerMethodField()
     placeholders = serializers.SerializerMethodField()
+
+    is_draft_mode = False
+    requested_partials = None
 
     class Meta:
         model = Page
-        fields = ('placeholders',)
+        fields = ('partials', 'placeholders')
+
+    def __init__(self, instance=None, data=empty, request=empty, **kwargs):
+        self.request = request
+        self.is_draft_mode = (hasattr(self.request, 'toolbar') and self.request.toolbar.edit_mode and
+                              self.request.user.has_perm('cms.edit_static_placeholder'))
+        super(PageSerializer, self).__init__(instance=instance, data=data, **kwargs)
 
     def get_placeholders(self, obj):
         placeholders = {}
         for placeholder in obj.placeholders.all():
             placeholders[placeholder.slot] = PlaceholderSerializer(instance=placeholder).data
         return placeholders
+
+    def get_partials(self, obj):
+        requested_partials = self.request.GET.get('partials')
+        partial_names = get_partial_names_for_template(template=obj.get_template(), get_all=False,
+                                                       requested_partials=requested_partials)
+
+        partials = {}
+        static_placeholders_names, custom_callbacks_names = split_static_placeholders_and_custom_partials(partial_names)
+        for slot in static_placeholders_names:
+            static_placeholder = get_static_placeholder(slot, self.is_draft_mode)
+            partials[static_placeholder.slot] = PlaceholderSerializer(instance=static_placeholder).data
+
+        partials.update(get_custom_partial_data(custom_callbacks_names, self.request))
+
+        return partials
 
     def to_representation(self, instance):
         representation = super().to_representation(instance=instance)

@@ -175,6 +175,10 @@ class PageDetailAPIView(RetrieveAPIView):
 
         return get_page_from_request(self.request, use_path=path)
 
+    def get_serializer(self, *args, **kwargs):
+        kwargs['request'] = self.request
+        return super(PageDetailAPIView, self).get_serializer(*args, **kwargs)
+
 
 class SpaCmsPageDetailApiView(CachedSpaApiView):
     cms_page = None
