@@ -1,0 +1,38 @@
+{
+    "data": {
+        "containers": {
+            "main": {
+                "type": "dyn-main",
+                "plugins": [
+                    {
+                        "content": {
+                            "body": "<p>Lorem ipsum dolor sit.</p>"
+                        },
+                        "type": "dyn-rich-text"
+                    }
+                ]
+            }
+        },
+        "news": {
+            "title": "News",
+            "articles": []
+        },
+        "meta": {
+            "title": "Page Title",
+            "description": "My description",
+            "languages": {
+                "de": "/de/",
+                "en": "/en/"
+            }
+        }
+    },
+    "partials": {
+        "footer": {
+            "plugins": [],
+            "type": "dyn-footer"
+        },
+        "menu": {
+            "foo": "bar"
+        }
+    }
+}
