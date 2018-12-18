@@ -184,7 +184,7 @@ def get_frontend_data_dict_for_partials(partials, request, editable=False, rende
                                     request.user.has_perm('cms.edit_static_placeholder'))
     static_placeholders = []
     for static_placeholder_name in static_placeholder_names:
-        static_placeholders.append(get_static_placeholder(static_placeholder_name, use_static_placeholder_draft))
+        static_placeholders.append(get_static_placeholder(static_placeholder_name, request.site, use_static_placeholder_draft))
 
     partial_data = get_frontend_data_dict_for_placeholders(
         placeholders=static_placeholders,
@@ -201,9 +201,10 @@ def get_frontend_data_dict_for_partials(partials, request, editable=False, rende
     return partial_data
 
 
-def get_static_placeholder(static_placeholder_slot_name, get_draft_data=False):
+def get_static_placeholder(static_placeholder_slot_name, site=None, get_draft_data=False):
     static_placeholder = StaticPlaceholder.objects.get_or_create(
         code=static_placeholder_slot_name,
+        site=site,
         defaults={'creation_method': StaticPlaceholder.CREATION_BY_TEMPLATE}
     )[0]
 
