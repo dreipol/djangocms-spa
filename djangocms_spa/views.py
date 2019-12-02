@@ -1,4 +1,3 @@
-import json
 from contextlib import suppress
 
 from cms.utils.moderator import use_draft
@@ -9,8 +8,10 @@ from django.urls import NoReverseMatch, resolve, reverse
 from django.utils.translation import activate
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+import json
 from .content_helpers import (get_frontend_data_dict_for_cms_page, get_frontend_data_dict_for_partials,
                               get_partial_names_for_template)
 from .decorators import cache_view
@@ -64,6 +65,7 @@ class MultipleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, MultipleObjec
     list_container_name = settings.DJANGOCMS_SPA_DEFAULT_LIST_CONTAINER_NAME
     model = None
     queryset = None
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -93,6 +95,7 @@ class MultipleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, MultipleObjec
 
 class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMixin):
     object = None
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -110,6 +113,7 @@ class SingleObjectSpaMixin(MetaDataMixin, ObjectPermissionMixin, SingleObjectMix
 
 class SpaApiView(APIView):
     template_name = None
+    permission_classes = [AllowAny]
 
     def get(self, *args, **kwargs):
         data = {
