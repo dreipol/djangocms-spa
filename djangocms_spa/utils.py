@@ -1,7 +1,7 @@
 from importlib import import_module
 
 from django.conf import settings
-from django.core.urlresolvers import resolve
+from django.urls import resolve
 
 
 def get_function_by_path(dotted_function_module_path):

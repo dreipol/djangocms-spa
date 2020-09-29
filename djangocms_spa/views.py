@@ -1,7 +1,7 @@
 from contextlib import suppress
 
 from cms.utils.moderator import use_draft
-from cms.utils.page_resolver import get_page_from_path
+from cms.utils.page import get_page_from_path
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.urls import NoReverseMatch, resolve, reverse

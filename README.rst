@@ -135,7 +135,7 @@ don't render any HTML templates, we need to configure the static placeholders fo
 ``DJANGOCMS_SPA_TEMPLATES`` as partials. To edit your placeholder and static placeholder data, you need to render both
 in the edit mode::
 
-    {% if request.toolbar.edit_mode %}
+    {% if request.toolbar.edit_mode_active %}
         {% placeholder "main" %}
         {% static_placeholder "footer" %}
     {% endif %}

@@ -1,6 +1,6 @@
 from appconf import AppConf
 from cms.utils.urlutils import admin_reverse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from menus.menu_pool import MenuRenderer

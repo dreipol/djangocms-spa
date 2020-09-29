@@ -1,8 +1,9 @@
-from django.conf.urls import url
+from django.urls import path, re_path
 
 from .views import SpaCmsPageDetailApiView
 
+app_name = 'djangocms_spa'
 urlpatterns = [
-    url(r'^pages/$', SpaCmsPageDetailApiView.as_view(), name='cms_page_detail_home'),
-    url(r'^pages/(?P<path>.*)/$', SpaCmsPageDetailApiView.as_view(), name='cms_page_detail'),
+    path('pages/', SpaCmsPageDetailApiView.as_view(), name='cms_page_detail_home'),
+    re_path(r'^pages/(?P<path>.*)/$', SpaCmsPageDetailApiView.as_view(), name='cms_page_detail'),
 ]
