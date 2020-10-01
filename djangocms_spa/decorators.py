@@ -24,7 +24,7 @@ def cache_view(view_func):
 
         cached_response = cache.get(cache_key)
 
-        if cached_response and not request.user.is_authenticated():
+        if cached_response and not request.user.is_authenticated:
             return cached_response
 
         response = view_func(view, *args, **kwargs)
