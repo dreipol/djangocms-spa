@@ -3,11 +3,10 @@ from functools import wraps
 from django.conf import settings
 from django.core.cache import cache
 from django.template.response import ContentNotRenderedError
-from django.utils.decorators import available_attrs
 
 
 def cache_view(view_func):
-    @wraps(view_func, assigned=available_attrs(view_func))
+    @wraps(view_func)
     def _wrapped_view_func(view: 'CachedApiView', *args, **kwargs):
         request = view.request
 
