@@ -3,6 +3,7 @@ from contextlib import suppress
 from cms.utils.moderator import use_draft
 from cms.utils.page import get_page_from_path
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse, JsonResponse
 from django.urls import NoReverseMatch, resolve, reverse
 from django.utils.translation import activate
@@ -171,7 +172,8 @@ class SpaCmsPageDetailApiView(CachedSpaApiView):
         draft = use_draft(request)
         preview = 'preview' in request.GET
         try:
-            self.cms_page = get_page_from_path(kwargs.get('path', ''), preview, draft)
+            self.cms_page = get_page_from_path(site=get_current_site(request), path=kwargs.get('path', ''),
+                                               preview=preview, draft=draft)
             self.cms_page_title = self.cms_page.title_set.get(language=request.LANGUAGE_CODE)
         except AttributeError:
             return JsonResponse(data={}, status=404)
