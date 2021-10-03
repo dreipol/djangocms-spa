@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from menus.menu_pool import MenuRenderer
 
-from djangocms_spa.json import LazyJSONEncoder
+from djangocms_spa.json_encoders import LazyJSONEncoder
 
 
 class DjangoCmsSPAConf(AppConf):
