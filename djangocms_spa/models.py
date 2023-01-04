@@ -2,7 +2,7 @@ from appconf import AppConf
 from cms.utils.urlutils import admin_reverse
 from django.urls import reverse
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from menus.menu_pool import MenuRenderer
 
 from djangocms_spa.json_encoders import LazyJSONEncoder
