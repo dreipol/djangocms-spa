@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import ALL_FIELDS, BaseModelForm, forms
 from django.forms.models import ModelFormMetaclass
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .renderer import SPAFormFieldWidgetRenderer
 
